@@ -1,0 +1,10 @@
+[package]
+name = "forwarder"
+version = "0.1.0"
+authors = ["ben-han-cn <ben.han.cn@gmail.com>"]
+
+[dependencies]
+futures = { version = "0.1.24", features = ["use_std"] }
+tokio = "0.1.8"
+r53 = { path = "../../r53" }
+clap = { version = "2.32", default-features = false}

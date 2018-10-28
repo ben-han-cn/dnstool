@@ -1,0 +1,11 @@
+[package]
+name = "dnsbench"
+version = "0.1.0"
+authors = ["ben-han-cn <ben.han.cn@gmail.com>"]
+
+[dependencies]
+futures = { version = "0.1", features = ["use_std"] }
+tokio = "0.1"
+r53 = { path = "../../r53" }
+clap = { version = "2.32", default-features = false}
+tokio-timer = "^0.2"
