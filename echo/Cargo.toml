@@ -1,0 +1,10 @@
+[package]
+name = "echo"
+version = "0.1.0"
+authors = ["ben-han-cn <ben.han.cn@gmail.com>"]
+
+[dependencies]
+tokio = "0.1.8"
+futures = "0.1.24"
+clap = { version = "2.32", default-features = false}
+tokio-timer = "^0.2"
