@@ -1,0 +1,22 @@
+[package]
+name = "tokiolearning"
+version = "0.1.0"
+authors = ["ben-han-cn <ben.han.cn@gmail.com>"]
+
+[dependencies]
+#tokio = {path = "../../network/tokio"}
+#futures = {path = "../../network/futures-rs"} 
+#tokio-io = {path = "../../network/tokio/tokio-io"}
+tokio = "0.1.11"
+futures = "0.1.20"
+tokio-io =  "0.1.9"
+bytes = "0.4.7"
+
+[[bin]]
+name = "server"
+path = "src/server/bin/main.rs"
+
+[[bin]]
+name = "client"
+path = "src/client/bin/main.rs"
+

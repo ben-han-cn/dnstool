@@ -2,4 +2,6 @@
 members = ["dnsbench",
            "snamed",
            "forwarder",
-           "echo",]
+           "echo",
+           "chat",
+           ]
