@@ -10,11 +10,10 @@ use std::net::SocketAddr;
 use clap::{App, Arg};
 use tokio::prelude::*;
 use tokio::net::UdpSocket;
-use std::time::{Instant, Duration};
+use std::time::{Duration};
 use tokio_timer::Interval;
 use std::sync::{Arc, Mutex};
 use tokio::executor;
-use futures::future::lazy;
 
 struct Server {
     socket: UdpSocket,

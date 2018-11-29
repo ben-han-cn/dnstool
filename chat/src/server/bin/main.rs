@@ -6,10 +6,10 @@ use std::net::SocketAddr;
 
 use futures::future::lazy;
 use futures::prelude::*;
+use tokio::codec::*;
 use tokio::executor;
 use tokio::net::TcpListener;
 use tokio::runtime;
-use tokio::codec::*;
 
 fn tcp_listener(addr: &str) -> (TcpListener, SocketAddr) {
     let addr = addr.parse::<SocketAddr>().unwrap();
@@ -25,17 +25,26 @@ fn start_server(addr: &str) {
         .unwrap();
 
     let (listener, _) = tcp_listener(addr);
-    rt.executor()
-        .spawn(listener.incoming().for_each(move |stream| {
-            executor::spawn(lazy(move || {
-                let transport = length_delimited::Builder::new().length_field_length(2).new_framed(stream);
-                transport.for_each(|frame|{
-                    println!("Received frame {}", String::from_utf8_lossy(frame.as_ref()));
-                    Ok(())
-                }).map_err(|_| ())
-            }));
-            Ok(())
-        }).map_err(|_| ()));
+    rt.executor().spawn(
+        listener
+            .incoming()
+            .for_each(move |stream| {
+                executor::spawn(lazy(move || {
+                    let transport = length_delimited::Builder::new()
+                        .length_field_length(2)
+                        .new_framed(stream);
+                    transport
+                        .for_each(|frame| {
+                            println!(
+                                "Received frame {}",
+                                String::from_utf8_lossy(frame.as_ref()).trim_end()
+                            );
+                            Ok(())
+                        }).map_err(|e| println!("----> get err {:?}", e))
+                }));
+                Ok(())
+            }).map_err(|_| ()),
+    );
     rt.shutdown_on_idle().wait().unwrap();
 }
 
