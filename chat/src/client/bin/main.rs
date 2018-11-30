@@ -1,19 +1,20 @@
-extern crate tokio;
-extern crate tokio_io;
 extern crate bytes;
 extern crate futures;
+extern crate tokio;
+extern crate tokio_io;
 
+use std::io::{self, Read};
 use std::net::SocketAddr;
 use std::thread;
-use std::io::{self, Read};
 
-use tokio::codec::*;
-use bytes::{Bytes};
-use tokio::net::TcpStream;
+use bytes::Bytes;
 use futures::future::lazy;
 use futures::prelude::*;
 use futures::sync::mpsc;
 use std::io::{Error, ErrorKind};
+use tokio::codec::*;
+use tokio::executor;
+use tokio::net::TcpStream;
 
 fn read_stdin(mut tx: mpsc::Sender<bytes::Bytes>) {
     let mut stdin = io::stdin();
@@ -43,7 +44,20 @@ fn main() {
     };
 
     tokio::run(lazy(move || {
-        let (sink, _) = length_delimited::Builder::new().length_field_length(2).new_framed(stream).split();
+        let (sink, reader) = length_delimited::Builder::new()
+            .length_field_length(2)
+            .new_framed(stream)
+            .split();
+        executor::spawn(
+            reader
+                .for_each(|frame| {
+                    println!(
+                        "Received frame {}",
+                        String::from_utf8_lossy(frame.as_ref()).trim_end()
+                    );
+                    Ok(())
+                }).map_err(|_| ()),
+        );
         stdin_rx.forward(sink).map_err(|_| ()).map(|_| ())
     }));
 }
